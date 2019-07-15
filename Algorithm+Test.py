@@ -26,10 +26,4 @@ regressor = RandomForestRegressor(n_estimators=100, random_state=0, verbose=1)
 regressor.fit(X_train, y_train)
 y_pred = regressor.predict(X_test)
 
-predictions1=pd.DataFrame(y_pred)
-Test_y1=pd.DataFrame(y_test)
-
-dfRes = pd.concat([predictions1,Test_y1],axis=1)
-dfRes.columns=["pred","y"]
-dfRes.drop(dfRes[dfRes.y == 0].index, axis=0, inplace=True)
-print("RMSPE is", metric(np.array(dfRes.pred), np.array(dfRes.y)))
+print("RMSPE is", metric(y_pred, y_test))
