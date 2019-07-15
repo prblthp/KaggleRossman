@@ -3,7 +3,7 @@ def PreprocessingTest():
     import numpy as np
     kaggle_data=pd.read_csv('new_train.csv',index_col=0)
     kaggle_data1=pd.read_csv('store.csv')
-    kaggle_dataX=pd.read_csv('testXXX.csv',index_col=0)
+    kaggle_dataX=pd.read_csv('test.csv',index_col=0)
     kaggle_data['StateHoliday'] = kaggle_data['StateHoliday'].map({0:0,'0': 0, 'a': 1,'b': 2,'c': 3})
     kaggle_data1['StoreType'] = kaggle_data1['StoreType'].map({'a': 1,'b': 2,'c': 3, 'd':4})
 
@@ -15,7 +15,6 @@ def PreprocessingTest():
 
     SelCol_data=merge_data.loc[:,['Sales','Store','DayOfWeek', 'Customers','Promo', 'StateHoliday', 'SchoolHoliday','StoreType','CompetitionDistance','Month','Year']]
     Final_data=SelCol_data.dropna()
-    print(Final_data.columns)
     Final_data.Store = pd.Categorical(Final_data.Store)
     Final_data.DayOfWeek = pd.Categorical(Final_data.DayOfWeek)
     Final_data.StateHoliday = pd.Categorical(Final_data.StateHoliday)
@@ -28,8 +27,6 @@ def PreprocessingTest():
 
     Final_data.drop(Final_data[Final_data.Sales == 0].index, axis=0, inplace=True)
 
-    print(Final_data.dtypes)
-    print(Final_data.columns)
     Final_data=pd.DataFrame(Final_data)
 
     ###Test Data Processing
@@ -47,7 +44,6 @@ def PreprocessingTest():
                   ['Sales', 'Store', 'DayOfWeek', 'Customers', 'Promo', 'StateHoliday', 'SchoolHoliday', 'StoreType',
                    'CompetitionDistance', 'Month', 'Year']]
     Final_Test = SelCol_dataX.dropna()
-    print(Final_Test.columns)
     Final_Test.Store = pd.Categorical(Final_Test.Store)
     Final_Test.DayOfWeek = pd.Categorical(Final_Test.DayOfWeek)
     Final_Test.StateHoliday = pd.Categorical(Final_Test.StateHoliday)
@@ -60,8 +56,6 @@ def PreprocessingTest():
 
     Final_Test.drop(Final_Test[Final_Test.Sales == 0].index, axis=0, inplace=True)
 
-    print(Final_Test.dtypes)
-    print(Final_Test.columns)
     Final_Test = pd.DataFrame(Final_Test)
 
     return Final_data, Final_Test
