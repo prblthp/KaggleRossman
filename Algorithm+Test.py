@@ -1,8 +1,25 @@
 import TestDataProcessing
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 Processed_Data, Processed_Test = TestDataProcessing.PreprocessingTest()
+
+def metric(preds, actuals):
+    preds = preds.reshape(-1)
+    actuals = actuals.reshape(-1)
+    assert preds.shape == actuals.shape
+    return 100 * np.linalg.norm((actuals - preds) / actuals) / np.sqrt(preds.shape[0])
+
+def plot_feature_importances(rf, cols):
+    importances = pd.DataFrame()
+    importances.loc[:, 'importances'] = rf.feature_importances_
+    importances.loc[:, 'features'] = cols
+    importances.sort_values('importances', inplace=True)
+    f, a = plt.subplots()
+    importances.plot(ax=a, kind='bar', x='features', y='importances')
+    plt.gcf().subplots_adjust(bottom=0.3)
+    f.savefig('importances.png')
 
 Train_data = Processed_Data.sample(frac=0.7)
 Test_data = Processed_Test
@@ -20,16 +37,10 @@ regressor = RandomForestRegressor(n_estimators=100, random_state=0, verbose=1)
 regressor.fit(X_train, y_train)
 y_pred = regressor.predict(X_test)
 
-predictions1=pd.DataFrame(y_pred)
-#print(predictions1)
-Test_y1=pd.DataFrame(y_test)
+cols = Train_data.loc[:, Train_data.columns != 'Sales'].columns
+plot_feature_importances(regressor, cols)
 
-print(Test_y1)
-print(predictions1)
-dfRes = pd.concat([predictions1,Test_y1],axis=1)
-dfRes.columns=["pred","y"]
-#print(dfRes.head)
-#dfRes1=dfRes[dfRes.iloc[:, 1] != 0]
-#print(sum(dfRes["Sales"]==0))
-dfRes.drop(dfRes[dfRes.y == 0].index, axis=0, inplace=True)
-print("RMSPE is",(sum(((dfRes.pred-dfRes.y)/dfRes.y)**2))/len(dfRes.pred)**0.5)
+print("RMSPE is", metric(y_pred, y_test))
+
+cols = Train_data.loc[:, Train_data.columns != 'Sales'].columns
+plot_feature_importances(regressor, cols)
